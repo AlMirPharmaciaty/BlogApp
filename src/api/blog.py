@@ -12,7 +12,7 @@ from ..controllers.blog import (
 from ..models import User
 from .auth import get_current_user
 
-blogs = APIRouter(prefix="/blogs")
+blogs = APIRouter(prefix="/blogs", tags=["Blogs"])
 
 
 @blogs.post("/", response_model=BlogDetails)

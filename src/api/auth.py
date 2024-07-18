@@ -10,7 +10,7 @@ from ..models import User
 from ..utils.encryption import verify
 from ..utils.database import get_db
 
-auth = APIRouter(prefix="/auth")
+auth = APIRouter(prefix="/auth", tags=["Auth"])
 
 SECRET_KEY = "asdasfasfasfesdfsd"
 ALGORITHM = "HS256"

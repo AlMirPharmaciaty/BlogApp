@@ -6,7 +6,7 @@ from ..controllers.user import create_user, update_user, delete_user
 from ..models import User
 from .auth import get_current_user
 
-users = APIRouter(prefix="/users")
+users = APIRouter(prefix="/users", tags=["Users"])
 
 
 @users.post("/", response_model=UserDetails)
