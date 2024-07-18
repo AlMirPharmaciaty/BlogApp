@@ -56,7 +56,9 @@ def get_all_blogs(
     skip: int = 0,
     limit: int = 10,
 ):
-
+    """
+    Retrieves a list of blog posts based on various filters and sorting parameters
+    """
     query = db.query(Blog).filter(Blog.is_active)
     if blog_id:
         query = query.filter(Blog.id == blog_id)

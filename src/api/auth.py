@@ -19,6 +19,14 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login/")
 
 
 class Token(BaseModel):
+    """
+    Represents an authentication token object
+
+    Attributes:
+        access_token: The actual token string used for authentication
+        token_type: The type of the token, typically "Bearer" for OAuth tokens
+    """
+
     access_token: str
     token_type: str
 
@@ -27,6 +35,11 @@ class Token(BaseModel):
 def login(
     form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)
 ):
+    """
+    Endpoint to let users log into the system
+    they are first authenticated by username and password
+    if verified, a token is created and sent to them
+    """
     user = authenticate_user(form_data.username, form_data.password, db)
     if not user:
         raise HTTPException(status_code=401, detail="Invalid credentials")
@@ -35,11 +48,19 @@ def login(
 
 
 def get_user(email: str, db: Session):
+    """
+    Function to get the active user from db by email
+    """
     user = db.query(User).filter(User.email == email, User.is_active).first()
     return user
 
 
 def authenticate_user(email: str, password: str, db: Session):
+    """
+    Function to authenticate user by email and password
+    the given password is verified using md5 encryption
+    see utils/encryption
+    """
     user = get_user(email=email, db=db)
     if not user:
         return False
@@ -49,6 +70,12 @@ def authenticate_user(email: str, password: str, db: Session):
 
 
 def create_access_token(data: dict, expires_delta: timedelta | None = None):
+    """
+    Function to create a JWT token
+    - expiry time is set to provided mins from request
+    - a data which is user credentials are encrypted
+        - by a secret key using HS256 algorithm
+    """
     to_encode = data.copy()
     if expires_delta:
         expire = datetime.now() + expires_delta
@@ -62,6 +89,12 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
 def get_current_user(
     token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)
 ):
+    """
+    Function to get active user
+    a token is retrieved from the client
+    and decoded using the same secret key and algorithm as the above function
+    then the user credentials are matched with the existing records in the db
+    """
     credentials_exception = HTTPException(status_code=401, detail="Invalid credentials")
 
     try:

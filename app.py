@@ -1,11 +1,11 @@
 """
 Importing modules from the 'src' folder
 - 'blog_app' is an FastAPI application
-- 'admin' is a Starlette application
+- 'admin_app' is a Starlette application
 """
 
-from src import blog_app  # , admin_app
-
+from src import blog_app
+# from src import admin_app
 
 app = blog_app()
 # app = admin_app()
