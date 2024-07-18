@@ -35,7 +35,7 @@ def login(
 
 
 def get_user(email: str, db: Session):
-    user = db.query(User).filter(User.email == email).first()
+    user = db.query(User).filter(User.email == email, User.is_active).first()
     return user
 
 
