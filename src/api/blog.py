@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
-from ..utils.database import get_db
-from ..schemas.blog import BlogDetails, BlogCreate, BlogUpdate
 from sqlalchemy.orm import Session
+from ..schemas.blog import BlogDetails, BlogCreate, BlogUpdate
+from ..utils.database import get_db
 from ..controllers.blog import (
     create_blog,
     get_all_blogs,
@@ -28,19 +28,19 @@ def blog_create(
 @blogs.get("/", response_model=list[BlogDetails])
 def blog_get_all(
     db: Session = Depends(get_db),
-    id: int = None,
+    blog_id: int = None,
     title: str = None,
     description: str = None,
     content: str = None,
     tag: str = None,
     author: str = None,
-    sort: BlogSortingOptions = Query(BlogSortingOptions.new, alias="Sort by"),
+    sort: BlogSortingOptions = Query(BlogSortingOptions.NEW, alias="Sort by"),
     skip: int = 0,
     limit: int = 10,
 ):
-    blogs = get_all_blogs(
+    blog_list = get_all_blogs(
         db=db,
-        id=id,
+        blog_id=blog_id,
         title=title,
         description=description,
         content=content,
@@ -50,7 +50,7 @@ def blog_get_all(
         skip=skip,
         limit=limit,
     )
-    return blogs
+    return blog_list
 
 
 @blogs.put("/{blog_id}", response_model=BlogDetails)
@@ -60,23 +60,17 @@ def update_item(
     db: Session = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    try:
-        blog = update_blog(db=db, blog_id=blog_id, blog=blog, user_id=user.id)
-        return blog
-    except Exception as e:
-        print(e)
+    blog = update_blog(db=db, blog_id=blog_id, blog=blog, user_id=user.id)
+    if not blog:
         raise HTTPException(status_code=404, detail="Blog not found")
+    return blog
 
 
 @blogs.delete("/{blog_id}", response_model=BlogDetails)
 def blog_delete(
     blog_id: int, db: Session = Depends(get_db), user: User = Depends(get_current_user)
 ):
-    try:
-        blog = delete_blog(db=db, blog_id=blog_id, user_id=user.id)
-        if blog:
-            return blog
-        else:
-            raise Exception
-    except:
+    blog = delete_blog(db=db, blog_id=blog_id, user_id=user.id)
+    if not blog:
         raise HTTPException(status_code=404, detail="Blog not found")
+    return blog

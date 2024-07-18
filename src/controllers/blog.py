@@ -1,10 +1,10 @@
+from enum import Enum
+from urllib import parse
+from fastapi import Query
+from sqlalchemy.orm import Session
+from sqlalchemy import func
 from ..models import Blog, User
 from ..schemas.blog import BlogCreate, BlogUpdate
-from sqlalchemy.orm import Session
-from urllib import parse
-from sqlalchemy import func
-from enum import Enum
-from fastapi import Query
 
 
 # Function to create a blog
@@ -19,41 +19,47 @@ def create_blog(blog: BlogCreate, db: Session, author_id: int):
 
 # Function to generate a slug URL for the blog
 def create_slug(title, db: Session):
-    # replace spaces with hyphen
+    """
+    Function to generate a slug URL for the blog by
+    - replacing spaces with hyphen
+    - making url safe
+    - cheking if the url already exists
+        - if yes, adding an incremented value at the end of the url
+    """
     slug = title.replace(" ", "-").lower()
-    # make url safe
     slug = parse.quote(slug)
-    # get number of blogs with same url
     existing_blogs = db.query(Blog).filter(Blog.slug.startswith(slug)).count()
-    # if there are blogs with same url
     if existing_blogs > 0:
-        # increment by one
         slug += f"-{str(existing_blogs + 1)}"
     return slug
 
 
 class BlogSortingOptions(str, Enum):
-    new = "Latest"
-    old = "Oldest"
+    """
+    asc and desc sorting options for blogs by datetime
+    """
+
+    NEW = "Latest"
+    OLD = "Oldest"
 
 
 # Function to filter (optional) and get all blogs
 def get_all_blogs(
     db: Session,
-    id: int = None,
+    blog_id: int = None,
     title: str = None,
     description: str = None,
     content: str = None,
     tag: str = None,
     author: str = None,
-    sort: BlogSortingOptions = Query(BlogSortingOptions.new),
+    sort: BlogSortingOptions = Query(BlogSortingOptions.NEW),
     skip: int = 0,
     limit: int = 10,
 ):
 
-    query = db.query(Blog).filter(Blog.is_active == True)
-    if id:
-        query = query.filter(Blog.id == id)
+    query = db.query(Blog).filter(Blog.is_active)
+    if blog_id:
+        query = query.filter(Blog.id == blog_id)
     if title:
         query = query.filter(func.lower(Blog.title).contains(title.lower()))
     if description:
@@ -66,7 +72,7 @@ def get_all_blogs(
         query = query.join(User).filter(
             func.lower(User.username).contains(author.lower())
         )
-    if sort.name == "old":
+    if sort.name == "OLD":
         query = query.order_by(Blog.datetime_created.asc())
     else:
         query = query.order_by(Blog.datetime_created.desc())
@@ -78,7 +84,7 @@ def get_all_blogs(
 def update_blog(db: Session, blog_id: int, blog: BlogUpdate, user_id: int):
     old_blog = (
         db.query(Blog)
-        .filter(Blog.id == blog_id, Blog.author_id == user_id, Blog.is_active == True)
+        .filter(Blog.id == blog_id, Blog.author_id == user_id, Blog.is_active)
         .first()
     )
 
@@ -100,7 +106,7 @@ def update_blog(db: Session, blog_id: int, blog: BlogUpdate, user_id: int):
 def delete_blog(db: Session, blog_id: int, user_id: int):
     blog = (
         db.query(Blog)
-        .filter(Blog.id == blog_id, Blog.author_id == user_id, Blog.is_active == True)
+        .filter(Blog.id == blog_id, Blog.author_id == user_id, Blog.is_active)
         .first()
     )
     if blog:

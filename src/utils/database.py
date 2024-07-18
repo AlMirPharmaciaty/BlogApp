@@ -3,12 +3,12 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
 # DEFINE THE DATABASE CREDENTIALS
-user = "postgres"
-password = "123"
-host = "127.0.0.1"
-port = 5432
-database = "postgres"
-DATABASE_URL = f"postgresql+psycopg2://{user}:{password}@{host}:{port}/{database}"
+USER = "postgres"
+PASSWORD = "123"
+HOST = "127.0.0.1"
+POST = 5432
+DATABASE = "postgres"
+DATABASE_URL = f"postgresql+psycopg2://{USER}:{PASSWORD}@{HOST}:{POST}/{DATABASE}"
 
 engine = create_engine(DATABASE_URL)
 session = sessionmaker(autocommit=False, autoflush=False, bind=engine)

@@ -1,5 +1,5 @@
-from ..models import User
 from sqlalchemy.orm import Session
+from ..models import User
 from ..utils.encryption import encrypt
 from ..schemas.user import UserCreate
 

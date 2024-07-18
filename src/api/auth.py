@@ -1,14 +1,14 @@
+from datetime import datetime
+from datetime import timedelta
 from fastapi import APIRouter, Depends, HTTPException
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from pydantic import BaseModel
 import jwt
+from jwt.exceptions import InvalidTokenError
 from sqlalchemy.orm import Session
 from ..models import User
 from ..utils.encryption import verify
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
-from pydantic import BaseModel
 from ..utils.database import get_db
-from jwt.exceptions import InvalidTokenError
-from datetime import datetime
-from datetime import timedelta
 
 auth = APIRouter(prefix="/auth")
 
@@ -69,8 +69,8 @@ def get_current_user(
         user_email: str = payload.get("sub")
         if user_email is None:
             raise credentials_exception
-    except InvalidTokenError:
-        raise credentials_exception
+    except InvalidTokenError as e:
+        raise credentials_exception from e
     user = get_user(email=user_email, db=db)
     if user is None:
         raise credentials_exception
