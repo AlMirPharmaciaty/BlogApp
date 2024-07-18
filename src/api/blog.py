@@ -54,7 +54,7 @@ def blog_get_all(
 
 
 @blogs.put("/{blog_id}", response_model=BlogDetails)
-def update_item(
+def blog_update(
     blog_id: int,
     blog: BlogUpdate,
     db: Session = Depends(get_db),
