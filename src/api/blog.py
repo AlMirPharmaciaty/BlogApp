@@ -74,6 +74,9 @@ def blog_delete(
 ):
     try:
         blog = delete_blog(db=db, blog_id=blog_id, user_id=user.id)
-        return blog
+        if blog:
+            return blog
+        else:
+            raise Exception
     except:
         raise HTTPException(status_code=404, detail="Blog not found")

@@ -51,7 +51,7 @@ def get_all_blogs(
     limit: int = 10,
 ):
 
-    query = db.query(Blog).join(User).filter(Blog.is_active == True)
+    query = db.query(Blog).filter(Blog.is_active == True)
     if id:
         query = query.filter(Blog.id == id)
     if title:
@@ -63,7 +63,9 @@ def get_all_blogs(
     if tag:
         query = query.filter(func.lower(Blog.tags).contains(tag.lower()))
     if author:
-        query = query.filter(func.lower(User.username).contains(author.lower()))
+        query = query.join(User).filter(
+            func.lower(User.username).contains(author.lower())
+        )
     if sort.name == "old":
         query = query.order_by(Blog.datetime_created.asc())
     else:
@@ -81,13 +83,14 @@ def update_blog(db: Session, blog_id: int, blog: BlogUpdate, user_id: int):
     )
 
     if old_blog:
+        # Check if blog title has changed
         if old_blog.title != blog.title:
-            print(blog.title)
+            # Update blog URL
             old_blog.slug = create_slug(blog.title, db)
-            print(old_blog.slug)
         old_blog.title = blog.title
         old_blog.description = blog.description
         old_blog.content = blog.content
+        old_blog.tags = blog.tags
         db.commit()
         db.refresh(old_blog)
     return old_blog
@@ -95,7 +98,11 @@ def update_blog(db: Session, blog_id: int, blog: BlogUpdate, user_id: int):
 
 # Function to delete a blog
 def delete_blog(db: Session, blog_id: int, user_id: int):
-    blog = db.query(Blog).filter(Blog.id == blog_id, Blog.author_id == user_id).first()
+    blog = (
+        db.query(Blog)
+        .filter(Blog.id == blog_id, Blog.author_id == user_id, Blog.is_active == True)
+        .first()
+    )
     if blog:
         blog.is_active = False
         db.commit()
