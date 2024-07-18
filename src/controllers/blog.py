@@ -1,6 +1,6 @@
 from ..models import Blog, User
 from ..schemas.blog import BlogCreate, BlogUpdate
-from sqlalchemy.orm import Session, joinedload
+from sqlalchemy.orm import Session
 from urllib import parse
 from sqlalchemy import func
 from enum import Enum
