@@ -29,7 +29,7 @@ def blog_app():
     init_db()
     app.include_router(blog.blogs)
     app.include_router(auth.auth)
-    app.include_router(user.users)
+    app.include_router(user.user)
     return app
 
 

@@ -10,7 +10,7 @@ from ..controllers.blog import (
     BlogSortingOptions,
 )
 from ..models import User
-from .auth import get_current_user
+from ..controllers.auth import get_current_user
 
 blogs = APIRouter(prefix="/blogs", tags=["Blogs"])
 
