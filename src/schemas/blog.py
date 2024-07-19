@@ -25,4 +25,7 @@ class BlogCreate(BlogBase):
 
 
 class BlogUpdate(BlogBase):
-    pass
+    title: str | None = None
+    description: str | None = None
+    content: str | None = None
+    tags: str | None = None
