@@ -12,10 +12,6 @@ class UserDetails(UserBase):
     deleted: bool
 
 
-class UserDetailsExtend(UserDetails):
-    blog_count: int = 0
-
-
 class UserCreate(UserBase):
     username: str = Field(min_length=4, max_length=16)
     email: EmailStr
