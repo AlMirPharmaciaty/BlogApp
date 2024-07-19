@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from ..utils.database import get_db
 from ..schemas.user import UserDetails, UserUpdate, UserDetailsExtend
 from ..controllers.user import update_user, delete_user, get_user
-from ..models import User
+from ..models.user import User
 from ..controllers.auth import get_current_user
 
 users = APIRouter(prefix="/user", tags=["User"])

@@ -15,7 +15,8 @@ from starlette_admin.contrib.sqla import Admin, ModelView
 from .utils.database import init_db
 from .utils.database import engine
 from .api import blog, auth, user
-from .models import Blog, User
+from .models.blog import Blog
+from .models.user import User
 
 
 def blog_app():

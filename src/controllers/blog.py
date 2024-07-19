@@ -3,7 +3,8 @@ from fastapi import Query, HTTPException
 from sqlalchemy.orm import Session
 from sqlalchemy import func
 from slugify import slugify
-from ..models import Blog, User
+from ..models.blog import Blog
+from ..models.user import User
 from ..schemas.blog import BlogCreate, BlogUpdate
 
 

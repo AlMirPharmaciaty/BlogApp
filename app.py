@@ -1,6 +1,6 @@
 """
 Importing modules from the 'src' folder
-- 'blog_app' is an FastAPI application
+- 'blog_app' is a FastAPI application
 - 'admin_app' is a Starlette application
 """
 
@@ -11,9 +11,9 @@ app = blog_app()
 # app = admin_app()
 
 
-@app.get("/")
-def home():
-    """
-    Home/landing page
-    """
-    return "Blog App - See APIs at /docs"
+# @app.get("/")
+# def home():
+#     """
+#     Home/landing page
+#     """
+#     return "Blog App - See APIs at /docs"

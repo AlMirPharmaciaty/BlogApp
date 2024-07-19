@@ -5,7 +5,7 @@ from fastapi.security import OAuth2PasswordBearer
 import jwt
 from jwt.exceptions import InvalidTokenError
 from sqlalchemy.orm import Session
-from ..models import User
+from ..models.user import User
 from ..utils.encryption import verify
 from ..utils.database import get_db
 

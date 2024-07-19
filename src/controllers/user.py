@@ -1,6 +1,7 @@
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
-from ..models import User, Blog
+from ..models.blog import Blog
+from ..models.user import User
 from ..utils.encryption import encrypt
 from ..schemas.user import UserCreate, UserUpdate
 from sqlalchemy import func
