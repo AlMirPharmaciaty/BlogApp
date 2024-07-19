@@ -19,6 +19,8 @@ def get_user(
     if username:
         query = query.filter(User.username == username)
     users = query.offset(skip).limit(limit).all()
+    for user in users:
+        user.blog_count = len(user.blogs)
     return users
 
 
