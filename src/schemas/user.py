@@ -9,7 +9,11 @@ class UserDetails(UserBase):
     id: int
     username: str
     email: str
-    is_active: bool
+    deleted: bool
+
+
+class UserDetailsExtend(UserDetails):
+    blog_count: int = 0
 
 
 class UserCreate(UserBase):

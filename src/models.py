@@ -15,7 +15,7 @@ class User(Base):
     password = Column(String, nullable=False)
     datetime_created = Column(DateTime, default=func.now())
     datetime_updated = Column(DateTime, default=func.now(), onupdate=func.now())
-    is_active = Column(Boolean, default=True)
+    deleted = Column(Boolean, default=False)
 
     blogs = relationship("Blog", back_populates="author")
 
@@ -32,6 +32,6 @@ class Blog(Base):
     author_id = Column(Integer, ForeignKey("users.id"))
     datetime_created = Column(DateTime, default=func.now())
     datetime_updated = Column(DateTime, default=func.now(), onupdate=func.now())
-    is_active = Column(Boolean, default=True)
+    deleted = Column(Boolean, default=False)
 
     author = relationship("User", back_populates="blogs")

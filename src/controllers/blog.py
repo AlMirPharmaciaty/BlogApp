@@ -1,5 +1,5 @@
 from enum import Enum
-from fastapi import Query
+from fastapi import Query, HTTPException
 from sqlalchemy.orm import Session
 from sqlalchemy import func
 from slugify import slugify
@@ -21,7 +21,7 @@ def create_blog(blog: BlogCreate, db: Session, author_id: int):
 def create_slug(title: str, db: Session):
     """
     Function to generate a slug URL for the blog by
-    - replacing spaces with hyphens, converting special characters
+    - replacing spaces with hyphens, removing special characters
     - cheking if the url already exists
         - if yes, adding an incremented value at the end of the url
     """
@@ -57,7 +57,7 @@ def get_all_blogs(
     """
     Retrieves a list of blog posts based on various filters and sorting parameters
     """
-    query = db.query(Blog).filter(Blog.is_active)
+    query = db.query(Blog).filter(Blog.deleted == False)
     if blog_id:
         query = query.filter(Blog.id == blog_id)
     if title:
@@ -84,25 +84,26 @@ def get_all_blogs(
 def update_blog(db: Session, blog_id: int, blog: BlogUpdate, user_id: int):
     old_blog = (
         db.query(Blog)
-        .filter(Blog.id == blog_id, Blog.author_id == user_id, Blog.is_active)
+        .filter(Blog.id == blog_id, Blog.author_id == user_id, Blog.deleted == False)
         .first()
     )
 
-    if old_blog:
-        # Check if blog title has changed
-        if blog.title:
-            if old_blog.title != blog.title:
-                # Update blog URL
-                old_blog.slug = create_slug(blog.title, db)
-            old_blog.title = blog.title
-        if blog.description:
-            old_blog.description = blog.description
-        if blog.content:
-            old_blog.content = blog.content
-        if blog.tags:
-            old_blog.tags = blog.tags
-        db.commit()
-        db.refresh(old_blog)
+    if not old_blog:
+        raise HTTPException(status_code=400, detail="Blog not found.")
+
+    if blog.title:
+        if old_blog.title != blog.title:
+            # Update blog URL
+            old_blog.slug = create_slug(blog.title, db)
+        old_blog.title = blog.title
+    if blog.description:
+        old_blog.description = blog.description
+    if blog.content:
+        old_blog.content = blog.content
+    if blog.tags:
+        old_blog.tags = blog.tags
+    db.commit()
+    db.refresh(old_blog)
     return old_blog
 
 
@@ -110,10 +111,11 @@ def update_blog(db: Session, blog_id: int, blog: BlogUpdate, user_id: int):
 def delete_blog(db: Session, blog_id: int, user_id: int):
     blog = (
         db.query(Blog)
-        .filter(Blog.id == blog_id, Blog.author_id == user_id, Blog.is_active)
+        .filter(Blog.id == blog_id, Blog.author_id == user_id, Blog.deleted == False)
         .first()
     )
-    if blog:
-        blog.is_active = False
-        db.commit()
+    if not blog:
+        raise HTTPException(status_code=400, detail="Blog not found.")
+    blog.deleted = True
+    db.commit()
     return blog

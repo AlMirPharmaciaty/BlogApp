@@ -12,7 +12,7 @@ class BlogBase(BaseModel):
 
 class BlogDetails(BlogBase):
     id: int
-    is_active: bool
+    deleted: bool
     datetime_created: datetime
     datetime_updated: datetime
     author_id: int

@@ -21,7 +21,7 @@ def get_user(email: str, db: Session):
     """
     Function to get the active user from db by email
     """
-    user = db.query(User).filter(User.email == email, User.is_active).first()
+    user = db.query(User).filter(User.email == email, User.deleted == False).first()
     return user
 
 
