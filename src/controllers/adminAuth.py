@@ -6,21 +6,6 @@ from sqlalchemy.orm import Session
 from ..utils.encryption import encrypt
 from ..models.user import User
 
-# users = {
-#     "admin": {
-#         "name": "Administrator",
-#         "avatar": None,
-#         "company_logo_url": None,
-#         "roles": ["read", "create", "edit", "delete", "action_make_published"],
-#     },
-#     "johndoe": {
-#         "name": "John Doe",
-#         "avatar": None,
-#         "roles": ["read", "create", "edit", "action_make_published"],
-#     },
-#     "viewer": {"name": "Viewer", "avatar": None, "roles": ["read"]},
-# }
-
 
 class MyAuthProvider(AuthProvider):
     """

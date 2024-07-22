@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Boolean, DateTime
+from sqlalchemy import Column, Integer, String, Boolean, DateTime, ARRAY
 from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
 from ..utils.database import Base
@@ -16,5 +16,6 @@ class User(Base):
     datetime_created = Column(DateTime, default=func.now())
     datetime_updated = Column(DateTime, default=func.now(), onupdate=func.now())
     deleted = Column(Boolean, default=False)
+    roles = Column(ARRAY(String))
 
     blogs = relationship("Blog", back_populates="author")

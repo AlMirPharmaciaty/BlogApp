@@ -1,19 +1,16 @@
-"""
-Importing modules from the 'src' folder
-- 'blog_app' is a FastAPI application
-- 'admin_app' is a Starlette application
-"""
-
+from fastapi.responses import HTMLResponse
 from src import blog_app
-# from src import admin_app
 
 app = blog_app()
-# app = admin_app()
 
 
-# @app.get("/")
-# def home():
-#     """
-#     Home/landing page
-#     """
-#     return "Blog App - See APIs at /docs"
+@app.get("/", response_class=HTMLResponse)
+def home():
+    content = """
+    <h1>BlogApp - API</h1>
+    <ul>
+    <li><h3><a href="/docs">API Documentation</a></h3></li>
+    <li><h3><a href="/admin">Administrative Interface</a></h3></li>
+    </ul>
+    """
+    return content
