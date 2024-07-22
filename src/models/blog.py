@@ -1,3 +1,4 @@
+from abc import abstractmethod
 from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Text, DateTime
 from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship, Session
@@ -37,21 +38,22 @@ class BlogView(ModelView):
         Blog.deleted,
     ]
 
-    async def find_all(
-        self,
-        request: Request,
-        skip: int = 0,
-        limit: int = 10,
-        where: list[dict[str, any], str, None] = None,
-        order_by: list[str] = ["datetime_created desc"],
-    ):
-        db: Session = request.state.session
-        user_id = request.state.user
-        query = db.query(Blog).filter(Blog.author_id == user_id)
-        if where:
-            print(where)
-        query = query.order_by(Blog.datetime_created.desc())
-        return query.offset(skip).limit(limit).all()
+    # @abstractmethod
+    # async def find_all(
+    #     self,
+    #     request: Request,
+    #     skip: int = 0,
+    #     limit: int = 10,
+    #     where: list[dict[str, any], str, None] = None,
+    #     order_by: list[str] = ["datetime_created desc"],
+    # ):
+    #     db: Session = request.state.session
+    #     user_id = request.state.user
+    #     query = db.query(Blog).filter(Blog.author_id == user_id, Blog.deleted == False)
+    #     if where:
+    #         pass
+    #     query = query.order_by(Blog.datetime_created.desc())
+    #     return query.offset(skip).limit(limit).all()
 
     async def before_create(self, request: Request, data: dict[str, any], obj: Blog):
         await slug_maker(request, blog=obj)
