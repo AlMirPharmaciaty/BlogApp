@@ -12,11 +12,14 @@ initialized before setting up the application components.
 from fastapi import FastAPI
 from starlette.applications import Starlette
 from starlette_admin.contrib.sqla import Admin, ModelView
+from starlette.middleware import Middleware
+from starlette.middleware.sessions import SessionMiddleware
 from .utils.database import init_db
 from .utils.database import engine
 from .api import blog, auth, user
-from .models.blog import Blog
+from .models.blog import Blog, BlogView
 from .models.user import User
+from .starlette_files.auth import MyAuthProvider
 
 
 def blog_app():
@@ -43,8 +46,13 @@ def admin_app():
     """
     init_db()
     app = Starlette()
-    admin = Admin(engine, title="Blog App Admin")
-    admin.add_view(ModelView(Blog))
+    admin = Admin(
+        engine,
+        title="Blog App Admin",
+        auth_provider=MyAuthProvider(),
+        middlewares=[Middleware(SessionMiddleware, secret_key="123456")],
+    )
+    admin.add_view(BlogView(Blog))
     admin.add_view(ModelView(User))
     admin.mount_to(app)
     return app

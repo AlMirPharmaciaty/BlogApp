@@ -5,3 +5,5 @@ psycopg2
 PyJWT
 starlette-admin
 python-slugify
+alembic
+itsdangerous
